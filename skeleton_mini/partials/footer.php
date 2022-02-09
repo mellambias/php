@@ -1,5 +1,5 @@
 <footer>
-        &COPY; Copyright <?php $company ?>
+        &COPY; Copyright <?php echo $company; ?>
     </footer>
 </body>
 </html>
