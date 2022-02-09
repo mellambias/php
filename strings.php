@@ -8,7 +8,7 @@ echo $nombreCompleto2;
 
 // Funciones de strings
 
-strlen($nombreCompleto);        //longitud
+strlen($nombreCompleto);        //longitud en bytes strlen(utf8_decode($s));
 trim($nombreCompleto);          // elimina los espacios
 ltrim($nombreCompleto);         // elimina espacios por la izquierda 
 rtrim($nombreCompleto);         // elimina espacios por la derecha
@@ -38,3 +38,4 @@ html_entity_decode($str);            //  pasa codigo a etiqueta
 htmlspecialchars($str);              //  convierte caracteres especiales en entidades html
 htmlspecialchars_decode($str);       //  convierte entidades html en caracteres
 
+?>
