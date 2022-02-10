@@ -1,0 +1,7 @@
+reiniciar apache desde consola:
+
+sudo systemctl restart apache2
+
+instalar modulo curl
+
+sudo apt install php7.4-curl
