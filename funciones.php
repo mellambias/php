@@ -35,9 +35,6 @@ function sum(...$numeros) {
 echo sum(1, 2, 3, 4);
 
 
-// desestructuracion
-
-list()
-[$campo1,$campo2] = 
+// desestructuracion en array
 
 ?>

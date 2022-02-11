@@ -93,4 +93,12 @@ array_values($array); // array indexado con los datos
     Observe que antes de PHP 7.0.0 este entero debía estar en el rango de -2147483648 a 2147483647.
     callback(mixed $a, mixed $b): int
 */
+
+/*
+Extraer a variables un array:
+https://www.php.net/manual/es/function.extract.php
+
+https://www.php.net/manual/es/function.list.php
+list() solo funciona con arrays numéricos y supone que los índices numéricos empiezan en 0.
+*/
 ?>
