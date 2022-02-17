@@ -1,0 +1,19 @@
+{
+    "name": "daw/autoloading",
+    "license": "mit",
+    "authors": [
+        {
+            "name": "mellambias",
+            "email": "mellambias@gmail.com"
+        }
+    ],
+    "require": {
+        "alrik11es/cowsayphp": "^1.2",
+        "intervention/image": "^2.7"
+    },
+    "autoload":{
+        "psr-4":{
+            "app\\":"app/"
+        }
+    }
+}

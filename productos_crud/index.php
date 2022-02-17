@@ -65,7 +65,8 @@ $conn = null;
               switch ($clave) {
                 case "image":
                   if($el){
-                    echo "<td><img src='$el' alt='' width='100px' title='$el'></td>";
+                    //echo "<td><img src='$el' alt='' width='100px' title='$el'></td>";
+                    echo "<td><img src='./image.php?img=$el' alt='' width='100px' title='$el'></td>";
                   }else{
                     echo "<td></td>";
                   }

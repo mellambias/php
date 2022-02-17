@@ -1,0 +1,13 @@
+{
+    "name": "daw/productos_crud",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "mellambias",
+            "email": "mellambias@gmail.com"
+        }
+    ],
+    "require": {
+        "intervention/image": "^2.7"
+    }
+}
