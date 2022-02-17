@@ -11,9 +11,19 @@ if(!$id){
   $conn = new PDO("mysql:host=$servername;dbname=$database", $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+  $stmt = $conn->prepare("SELECT image FROM products WHERE id=:id");
+  $stmt->bindValue(":id",$id);
+  $stmt->execute();
+  $product = $stmt->fetch(PDO::FETCH_ASSOC);
+  $image = $product["image"];
+
   $stmt = $conn->prepare("DELETE FROM products WHERE id=:id");
   $stmt->bindValue(":id",$id);
   $stmt->execute();
+  if(file_exists($image)){
+     unlink($image);
+     rmdir(dirname($image));
+   }
   header('location:index.php');
 
   

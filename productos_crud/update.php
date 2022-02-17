@@ -6,41 +6,86 @@ $price = "";
 $error=array();
 
 //echo '<pre>';print_r($_SERVER['REQUEST_METHOD']);echo '<pre>';
+if($_SERVER['REQUEST_METHOD']=='GET'){
+  if(!$_GET['id']){
+    header('location:index.php');
+    exit;
+  };
+
+  try{
+    $conn = new PDO("mysql:host=$servername;dbname=$database", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $stmt = $conn->prepare("SELECT id, title, image, description, price, date FROM products WHERE id=:id");
+    $stmt->bindParam(':id', $_GET['id']);
+    $stmt->execute();
+    $producto = $stmt->fetch(PDO::FETCH_ASSOC); // uso :: por ser una constante
+    if(!$producto){
+      header('location:index.php');
+    exit;
+    }
+    extract($producto); // crea y asigna variables
+
+  }catch(PDOException $e) {
+    echo "Error: " . $e->getMessage();
+  }
+};
 
 if($_SERVER['REQUEST_METHOD']=='POST'){
 try {
   $conn = new PDO("mysql:host=$servername;dbname=$database", $username, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-  //$stmt = $conn->prepare("SELECT id, title, image, description, price, date FROM products");
-  //$stmt->execute();
 
- $stmt = $conn->prepare("INSERT INTO products (title, image, description, price, date)
-  VALUES (:title, :image, :description, :price, :date)");
+ $stmt = $conn->prepare("UPDATE products 
+ SET title = :title, 
+ image = :image, 
+ description = :description, 
+ price = :price
+ WHERE id= :id
+  ");
   $stmt->bindParam(':title', $title);
   $stmt->bindParam(':image', $image);
   $stmt->bindParam(':description', $description);
   $stmt->bindParam(':price', $price);
-  $stmt->bindParam(':date', $date);
+  //$stmt->bindParam(':date', $date);
+  $stmt->bindParam(':id', $id);
 
-   // insert a row
+  $id=$_POST['id'];
   $title = isset($_POST['title'])?htmlentities($_POST['title']):"Sin titulo";
-  $imageObj = isset($_FILES['image'])?$_FILES['image']:null;
+  $image = $_POST['image'];
+  $imageObj = ($_FILES['newImage']['tmp_name']!="")?$_FILES['newImage']:null;
   if($imageObj){
     
     if(!is_dir('images')){
-      mkdir('images',0775);
+      try{
+        mkdir('images',0777, true);
+      }catch(Error $e){
+        die($e);
+      }
+      
     }
-    $image = 'images/'.randomString(8).'/'.$image['name'];
-    mkdir(dirname($image),0775);
-    move_uploaded_file($imageObj['temp_name'],$image);
-  }else{
-    $image=$imageObj;
+    $imagePath = 'images/'.randomString(8);
+    try{
+       mkdir($imagePath,0777,true);
+       //print_r($imageObj);
+       //echo $imagePath.'/'.$imageObj['name'];
+        if(!(move_uploaded_file($imageObj['tmp_name'],$imagePath.'/'.$imageObj['name']))){
+          echo 'Error al mover archivos'. $imageObj['tmp_name'].' a '.$imagePath.'/'.$imageObj['name'];
+        };
+      
+      }catch(Error $e){
+      die($e.' '.$image);
+    }
+   // eliminar imagen y directorio anterior
+   if(file_exists($image)){
+     unlink($image);
+     rmdir(dirname($image));
+   }
+    $image=$imagePath.'/'.$imageObj['name'];
   }
 
   $description = isset($_POST['description'])?htmlentities($_POST['description']):"Sin descripcion";
   $price =  isset($_POST['price'])?htmlentities($_POST['price']):"000.00";
-  $date = date("Y/m/d");
-
+  //$date = date("Y/m/d");
   $stmt->execute();
   header("Location: index.php");
 
@@ -50,7 +95,7 @@ try {
 $conn = null;
 }
 
-function randomString($n){
+function randomString($n,$file=null){
   //$caracteres = md5_file($file);
   $caracteres = '1234rtgfr4563251';
   $str="";
@@ -61,7 +106,6 @@ function randomString($n){
   }
   return $str;
 }
-
 
 ?>
 <!DOCTYPE html>
@@ -82,11 +126,17 @@ function randomString($n){
     <title>Productos</title>
   </head>
   <body>
-    <h1>crear un nuevo producto</h1>
+    <h1>Modificar producto</h1>
 <form method="post" enctype="multipart/form-data">
+  <?php 
+  if($image!=""){
+    echo '<img src="'.$image .'" alt="" height="100px" style="border:5px red">';
+  }
+  ?>
   <div class="mb-3">
-    <label for="image" class="form-label">imagen</label>
-    <input type="file" class="form-control" id="image" aria-describedby="imagen" name="image">
+    <label for="newImage" class="form-label">imagen</label>
+    <input type="file" class="form-control" id="image" aria-describedby="imagen" name="newImage">
+    <input type="hidden" name="image" value="<?php echo $image ?>">
   </div>
   <div class="mb-3">
     <label for="title" class="form-label">Titulo</label>
@@ -94,12 +144,13 @@ function randomString($n){
   </div>
   <div class="mb-3">
     <label for="description" class="form-label">descripcion</label>
-    <textarea class="form-control" id="description" name="description"></textarea>
+    <textarea class="form-control" id="description" name="description"><?php echo $description?></textarea>
   </div>
   <div class="mb-3">
     <label for="price" class="form-label">Precio</label>
-    <input type="number" step='.01' class="form-control" id="price" name="price">
+    <input type="number" step='.01' class="form-control" id="price" name="price" value="<?php echo $price?>">
   </div>
+  <input type="hidden" name="id" value="<?php echo $id?>">
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
     
